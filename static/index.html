@@ -1,0 +1,509 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>SmartShopper AI - Test Interface</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+        
+        body {
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            min-height: 100vh;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            padding: 20px;
+        }
+        
+        .container {
+            background: white;
+            border-radius: 15px;
+            box-shadow: 0 20px 40px rgba(0,0,0,0.1);
+            overflow: hidden;
+            max-width: 1200px;
+            width: 100%;
+            min-height: 600px;
+        }
+        
+        .header {
+            background: linear-gradient(135deg, #4facfe 0%, #00f2fe 100%);
+            padding: 30px;
+            text-align: center;
+            color: white;
+        }
+        
+        .header h1 {
+            font-size: 2.5rem;
+            margin-bottom: 10px;
+        }
+        
+        .header p {
+            font-size: 1.2rem;
+            opacity: 0.9;
+        }
+        
+        .main-content {
+            display: flex;
+            height: calc(100% - 120px);
+        }
+        
+        .search-section, .chat-section {
+            flex: 1;
+            padding: 30px;
+            border-right: 1px solid #eee;
+        }
+        
+        .chat-section {
+            border-right: none;
+        }
+        
+        .section-title {
+            font-size: 1.5rem;
+            margin-bottom: 20px;
+            color: #333;
+            border-bottom: 2px solid #4facfe;
+            padding-bottom: 10px;
+        }
+        
+        .search-form, .chat-form {
+            margin-bottom: 20px;
+        }
+        
+        .form-group {
+            margin-bottom: 15px;
+        }
+        
+        label {
+            display: block;
+            margin-bottom: 5px;
+            font-weight: 600;
+            color: #555;
+        }
+        
+        input, select, textarea, button {
+            width: 100%;
+            padding: 12px;
+            border: 2px solid #ddd;
+            border-radius: 8px;
+            font-size: 16px;
+            transition: border-color 0.3s ease;
+        }
+        
+        input:focus, select:focus, textarea:focus {
+            outline: none;
+            border-color: #4facfe;
+        }
+        
+        button {
+            background: linear-gradient(135deg, #4facfe 0%, #00f2fe 100%);
+            color: white;
+            border: none;
+            cursor: pointer;
+            font-weight: 600;
+            text-transform: uppercase;
+            letter-spacing: 1px;
+            transition: transform 0.2s ease;
+        }
+        
+        button:hover {
+            transform: translateY(-2px);
+        }
+        
+        button:disabled {
+            opacity: 0.6;
+            cursor: not-allowed;
+            transform: none;
+        }
+        
+        .results {
+            background: #f8f9fa;
+            border-radius: 8px;
+            padding: 20px;
+            max-height: 400px;
+            overflow-y: auto;
+            border: 1px solid #e9ecef;
+        }
+        
+        .product-card {
+            background: white;
+            border-radius: 8px;
+            padding: 15px;
+            margin-bottom: 15px;
+            box-shadow: 0 2px 8px rgba(0,0,0,0.1);
+            transition: transform 0.2s ease;
+        }
+        
+        .product-card:hover {
+            transform: translateY(-2px);
+        }
+        
+        .product-name {
+            font-size: 1.2rem;
+            font-weight: 600;
+            color: #333;
+            margin-bottom: 5px;
+        }
+        
+        .product-brand {
+            color: #666;
+            margin-bottom: 8px;
+        }
+        
+        .product-price {
+            font-size: 1.3rem;
+            font-weight: 700;
+            color: #4facfe;
+            margin-bottom: 8px;
+        }
+        
+        .product-rating {
+            color: #ffc107;
+            margin-bottom: 8px;
+        }
+        
+        .product-description {
+            color: #555;
+            font-size: 0.9rem;
+            line-height: 1.4;
+        }
+        
+        .chat-messages {
+            background: #f8f9fa;
+            border-radius: 8px;
+            padding: 20px;
+            max-height: 300px;
+            overflow-y: auto;
+            margin-bottom: 20px;
+            border: 1px solid #e9ecef;
+        }
+        
+        .message {
+            margin-bottom: 15px;
+            padding: 10px;
+            border-radius: 8px;
+        }
+        
+        .user-message {
+            background: #4facfe;
+            color: white;
+            margin-left: 20%;
+        }
+        
+        .ai-message {
+            background: white;
+            color: #333;
+            border: 1px solid #ddd;
+            margin-right: 20%;
+        }
+        
+        .suggestions {
+            display: flex;
+            gap: 10px;
+            flex-wrap: wrap;
+            margin-top: 15px;
+        }
+        
+        .suggestion-btn {
+            background: #e9ecef;
+            color: #495057;
+            border: 1px solid #ced4da;
+            padding: 8px 15px;
+            font-size: 0.9rem;
+            border-radius: 20px;
+            cursor: pointer;
+            transition: all 0.2s ease;
+            width: auto;
+        }
+        
+        .suggestion-btn:hover {
+            background: #4facfe;
+            color: white;
+            border-color: #4facfe;
+            transform: translateY(-1px);
+        }
+        
+        .loading {
+            text-align: center;
+            padding: 20px;
+            color: #666;
+        }
+        
+        .error {
+            background: #f8d7da;
+            color: #721c24;
+            padding: 15px;
+            border-radius: 8px;
+            margin-bottom: 15px;
+        }
+        
+        @media (max-width: 768px) {
+            .main-content {
+                flex-direction: column;
+            }
+            
+            .search-section {
+                border-right: none;
+                border-bottom: 1px solid #eee;
+            }
+            
+            .header h1 {
+                font-size: 2rem;
+            }
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <div class="header">
+            <h1>🛒 SmartShopper AI</h1>
+            <p>Your Intelligent Shopping Assistant</p>
+        </div>
+        
+        <div class="main-content">
+            <!-- Search Section -->
+            <div class="search-section">
+                <h2 class="section-title">🔍 Product Search</h2>
+                
+                <form class="search-form" id="searchForm">
+                    <div class="form-group">
+                        <label for="query">Search Query</label>
+                        <input type="text" id="query" name="query" placeholder="e.g., iPhone, laptop, headphones..." required>
+                    </div>
+                    
+                    <div class="form-group">
+                        <label for="category">Category (Optional)</label>
+                        <select id="category" name="category">
+                            <option value="">All Categories</option>
+                            <option value="electronics">Electronics</option>
+                            <option value="clothing">Clothing</option>
+                            <option value="home">Home</option>
+                            <option value="books">Books</option>
+                            <option value="sports">Sports</option>
+                            <option value="beauty">Beauty</option>
+                        </select>
+                    </div>
+                    
+                    <div style="display: flex; gap: 10px;">
+                        <div class="form-group" style="flex: 1;">
+                            <label for="minPrice">Min Price ($)</label>
+                            <input type="number" id="minPrice" name="min_price" min="0" step="0.01">
+                        </div>
+                        <div class="form-group" style="flex: 1;">
+                            <label for="maxPrice">Max Price ($)</label>
+                            <input type="number" id="maxPrice" name="max_price" min="0" step="0.01">
+                        </div>
+                    </div>
+                    
+                    <button type="submit" id="searchBtn">Search Products</button>
+                </form>
+                
+                <div id="searchResults" class="results"></div>
+            </div>
+            
+            <!-- Chat Section -->
+            <div class="chat-section">
+                <h2 class="section-title">💬 AI Shopping Assistant</h2>
+                
+                <div id="chatMessages" class="chat-messages">
+                    <div class="message ai-message">
+                        <strong>SmartShopper AI:</strong><br>
+                        Hello! I'm your AI shopping assistant. I can help you find products, compare prices, and make recommendations. What are you looking for today?
+                    </div>
+                </div>
+                
+                <form class="chat-form" id="chatForm">
+                    <div class="form-group">
+                        <textarea id="chatInput" name="message" placeholder="Ask me anything about products..." rows="3" required></textarea>
+                    </div>
+                    <button type="submit" id="chatBtn">Send Message</button>
+                </form>
+                
+                <div id="suggestions" class="suggestions"></div>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        const API_BASE = '';
+        
+        // Search functionality
+        document.getElementById('searchForm').addEventListener('submit', async (e) => {
+            e.preventDefault();
+            
+            const searchBtn = document.getElementById('searchBtn');
+            const resultsDiv = document.getElementById('searchResults');
+            
+            searchBtn.disabled = true;
+            searchBtn.textContent = 'Searching...';
+            resultsDiv.innerHTML = '<div class="loading">🔍 Searching for products...</div>';
+            
+            try {
+                const formData = new FormData(e.target);
+                const searchData = Object.fromEntries(formData.entries());
+                
+                // Remove empty values
+                Object.keys(searchData).forEach(key => {
+                    if (!searchData[key]) {
+                        delete searchData[key];
+                    }
+                });
+                
+                const response = await fetch('/api/search', {
+                    method: 'POST',
+                    headers: {
+                        'Content-Type': 'application/json',
+                    },
+                    body: JSON.stringify(searchData)
+                });
+                
+                const result = await response.json();
+                
+                if (result.error) {
+                    resultsDiv.innerHTML = `<div class="error">❌ ${result.error}</div>`;
+                } else {
+                    displaySearchResults(result);
+                }
+                
+            } catch (error) {
+                resultsDiv.innerHTML = `<div class="error">❌ Error: ${error.message}</div>`;
+            }
+            
+            searchBtn.disabled = false;
+            searchBtn.textContent = 'Search Products';
+        });
+        
+        // Chat functionality
+        document.getElementById('chatForm').addEventListener('submit', async (e) => {
+            e.preventDefault();
+            
+            const chatBtn = document.getElementById('chatBtn');
+            const chatInput = document.getElementById('chatInput');
+            const messagesDiv = document.getElementById('chatMessages');
+            const suggestionsDiv = document.getElementById('suggestions');
+            
+            const message = chatInput.value.trim();
+            if (!message) return;
+            
+            // Add user message
+            addMessage(message, 'user');
+            chatInput.value = '';
+            
+            chatBtn.disabled = true;
+            chatBtn.textContent = 'Thinking...';
+            
+            try {
+                const response = await fetch('/api/chat', {
+                    method: 'POST',
+                    headers: {
+                        'Content-Type': 'application/json',
+                    },
+                    body: JSON.stringify({ message })
+                });
+                
+                const result = await response.json();
+                
+                if (result.error) {
+                    addMessage(`❌ ${result.error}`, 'ai');
+                } else {
+                    addMessage(result.response, 'ai');
+                    
+                    // Display product recommendations
+                    if (result.products && result.products.length > 0) {
+                        displayChatProducts(result.products);
+                    }
+                    
+                    // Display suggestions
+                    if (result.suggestions && result.suggestions.length > 0) {
+                        displaySuggestions(result.suggestions);
+                    }
+                }
+                
+            } catch (error) {
+                addMessage(`❌ Error: ${error.message}`, 'ai');
+            }
+            
+            chatBtn.disabled = false;
+            chatBtn.textContent = 'Send Message';
+        });
+        
+        function displaySearchResults(result) {
+            const resultsDiv = document.getElementById('searchResults');
+            
+            if (result.products.length === 0) {
+                resultsDiv.innerHTML = '<div class="loading">😕 No products found. Try a different search term.</div>';
+                return;
+            }
+            
+            const html = result.products.map(product => `
+                <div class="product-card">
+                    <div class="product-name">${product.name}</div>
+                    <div class="product-brand">${product.brand || 'Unknown Brand'}</div>
+                    <div class="product-price">$${product.price.toFixed(2)}</div>
+                    ${product.rating ? `<div class="product-rating">${'⭐'.repeat(Math.round(product.rating))} (${product.rating}/5)</div>` : ''}
+                    <div class="product-description">${product.description}</div>
+                </div>
+            `).join('');
+            
+            resultsDiv.innerHTML = `
+                <h3>Found ${result.total} products (Page ${result.page} of ${result.total_pages})</h3>
+                ${html}
+            `;
+        }
+        
+        function addMessage(message, type) {
+            const messagesDiv = document.getElementById('chatMessages');
+            const messageDiv = document.createElement('div');
+            messageDiv.className = `message ${type}-message`;
+            messageDiv.innerHTML = `<strong>${type === 'user' ? 'You' : 'SmartShopper AI'}:</strong><br>${message}`;
+            messagesDiv.appendChild(messageDiv);
+            messagesDiv.scrollTop = messagesDiv.scrollHeight;
+        }
+        
+        function displayChatProducts(products) {
+            const messagesDiv = document.getElementById('chatMessages');
+            const productsHtml = products.slice(0, 3).map(product => `
+                <div style="background: #f0f7ff; padding: 10px; margin: 5px 0; border-radius: 5px; border-left: 3px solid #4facfe;">
+                    <strong>${product.name}</strong> by ${product.brand || 'Unknown'}<br>
+                    <span style="color: #4facfe; font-weight: bold;">$${product.price.toFixed(2)}</span>
+                    ${product.rating ? ` • ⭐ ${product.rating}/5` : ''}
+                </div>
+            `).join('');
+            
+            const messageDiv = document.createElement('div');
+            messageDiv.className = 'message ai-message';
+            messageDiv.innerHTML = `<strong>Recommended Products:</strong><br>${productsHtml}`;
+            messagesDiv.appendChild(messageDiv);
+            messagesDiv.scrollTop = messagesDiv.scrollHeight;
+        }
+        
+        function displaySuggestions(suggestions) {
+            const suggestionsDiv = document.getElementById('suggestions');
+            suggestionsDiv.innerHTML = suggestions.map(suggestion => 
+                `<button class="suggestion-btn" onclick="sendSuggestion('${suggestion}')">${suggestion}</button>`
+            ).join('');
+        }
+        
+        function sendSuggestion(suggestion) {
+            document.getElementById('chatInput').value = suggestion;
+            document.getElementById('chatForm').dispatchEvent(new Event('submit'));
+        }
+        
+        // Health check on page load
+        window.addEventListener('load', async () => {
+            try {
+                const response = await fetch('/health');
+                const health = await response.json();
+                console.log('SmartShopper AI Health:', health);
+            } catch (error) {
+                console.error('Health check failed:', error);
+            }
+        });
+    </script>
+</body>
+</html>
