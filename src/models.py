@@ -45,6 +45,7 @@ class Product(BaseModel):
     # URLs and media
     product_url: Optional[HttpUrl] = Field(None, description="Product page URL")
     image_urls: List[HttpUrl] = Field(default_factory=list, description="Product image URLs")
+    image_embedding: Optional[List[float]] = Field(None, description="CLIP image embedding vector")
     
     # Metadata
     created_at: datetime = Field(default_factory=datetime.utcnow, description="Creation timestamp")
@@ -91,6 +92,24 @@ class ChatResponse(BaseModel):
     products: List[Product] = Field(default_factory=list, description="Recommended products")
     suggestions: List[str] = Field(default_factory=list, description="Follow-up suggestions")
     context: Optional[Dict[str, Any]] = Field(None, description="Conversation context")
+
+
+class VisualSearchRequest(BaseModel):
+    """Visual search request model."""
+    # Image will be sent as base64 or multipart/form-data
+    min_price: Optional[float] = Field(None, ge=0, description="Minimum price filter")
+    max_price: Optional[float] = Field(None, ge=0, description="Maximum price filter")
+    category: Optional[ProductCategory] = Field(None, description="Filter by category")
+    top_k: int = Field(default=10, ge=1, le=50, description="Number of results to return")
+    use_gemini_analysis: bool = Field(default=True, description="Use Gemini Vision for analysis")
+
+
+class VisualSearchResponse(BaseModel):
+    """Visual search response model."""
+    products: List[Product] = Field(..., description="Found products")
+    total: int = Field(..., ge=0, description="Total number of results")
+    gemini_analysis: Optional[Dict[str, Any]] = Field(None, description="Gemini Vision analysis results")
+    search_time_ms: float = Field(..., description="Search time in milliseconds")
 
 
 class HealthStatus(BaseModel):
